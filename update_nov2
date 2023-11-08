@@ -19,4 +19,4 @@
 -> correlations between HDI and Tx Power median standard deviations look kinda promising (std devs serve as actualy error bars anyway and HDI is probably logarithmic to std devs)
 -> current work: trying linear combinations of pop dens and HDI arrays to find best correlation between pixel wise Tx power (and number of Tx per pixel possibly)
 -> median gets errorbars for better visualization
--> 
+-> also made country area raster map as a possible factor
