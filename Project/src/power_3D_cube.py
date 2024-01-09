@@ -17,6 +17,7 @@ def get_dataframe_fov(Rx_Power_in_Kelvin, df, found_common, Rad_of_FOV, elev_ang
     Returns:
         dataframe: Dataframes for the FOV of the satellite for each pixel position at different altitudes
     """
+    beam_pattern=str(input('Enter desired beam pattern:'))
     df_data=pd.DataFrame(Rx_Power_in_Kelvin)
     df_data['Pixel_number']=df['Pixel_number'].values
     df_data['New Frequency']=df['New Frequency'].values
@@ -26,7 +27,7 @@ def get_dataframe_fov(Rx_Power_in_Kelvin, df, found_common, Rad_of_FOV, elev_ang
     for j in range(len(Rad_of_FOV)):
         for i in range(len(found_common)):
             df_fov[i][j]= df_data.loc[df_data['Pixel_number'].isin(found_common[i][j])]
-            df_fov[i][j][j]=df_fov[i][j][j]*get_beam_pattern("sin square", elev_angle[j,i,found_common[i,j]])
+            df_fov[i][j][j]=df_fov[i][j][j]*get_beam_pattern(beam_pattern, elev_angle[j,i,found_common[i,j]])
             df_fov[i][j]= df_fov[i][j].groupby(['New Frequency']).sum()  # df9['Pixel_number']= Column consisting of 
             df_fov[i][j]= df_fov[i][j].reset_index()
     return df_fov
