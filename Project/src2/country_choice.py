@@ -6,7 +6,7 @@ data = {'country': names, 'vals': vals}
 df = pd.DataFrame(data)
 
 def country_select():
-    country = input('Select country: ')
+    country = input('Select 5k country: ')
     if country in names:
         selected_vals = df.loc[df['country'] == country, 'vals'].values
         print(f'{selected_vals[0]} Tx in total')
