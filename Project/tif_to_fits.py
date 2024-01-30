@@ -14,10 +14,10 @@ def tif_to_fits(tif_file, fits_file):
 
 if __name__ == "__main__":
     # Replace 'input.tif' with the path to your .tif file
-    input_tif_file = "/media/sf_Shared_Ubuntu/GHS_POP_E2030_GLOBE_R2023A_4326_30ss_V1_0.tif"
+    input_tif_file = "/home/pratush/Downloads/GHS_POP_E2030_GLOBE_R2023A_54009_1000_V1_0/GHS_POP_E2030_GLOBE_R2023A_54009_1000_V1_0.tif"
 
     # Replace 'output.fits' with the desired path for your .fits file
-    output_fits_file = "/home/yogen14/Project/output.fits"
+    output_fits_file = "/home/pratush/Downloads/tiffitsconvert.fits"
 
     tif_to_fits(input_tif_file, output_fits_file)
 
