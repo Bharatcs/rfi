@@ -3,7 +3,7 @@ import pandas as pd
 from src.satellite_properties import get_beam_pattern
 pd.options.mode.chained_assignment = None
 
-def get_dataframe_fov(Rx_Power_in_Kelvin, df, found_common, Rad_of_FOV, elev_angle):
+def get_dataframe_fov(Rx_Power_in_Kelvin, df, found_common, Rad_of_FOV, elev_angle,beam_pattern):
     """Create dataframe for the FOV of the satellite for each pixel position at different altitudes
 
     Args:
@@ -17,7 +17,7 @@ def get_dataframe_fov(Rx_Power_in_Kelvin, df, found_common, Rad_of_FOV, elev_ang
     Returns:
         dataframe: Dataframes for the FOV of the satellite for each pixel position at different altitudes
     """
-    beam_pattern=str(input('Enter desired beam pattern:'))
+   
     df_data=pd.DataFrame(Rx_Power_in_Kelvin)
     df_data['Pixel_number']=df['Pixel_number'].values
     df_data['New Frequency']=df['New Frequency'].values
