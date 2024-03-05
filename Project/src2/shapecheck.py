@@ -6,6 +6,6 @@ def shapecheck(lon,lat,name):
     for pi in checkpix:
         checkmap[pi]+=1
     checkmap=np.where(checkmap != 0, 1, 0)
-    return hp.mollview(checkmap,flip='geo',title=name,cmap='inferno')
+    return hp.mollview(checkmap,flip='geo',title=name,cmap='gnuplot2')
     
 
