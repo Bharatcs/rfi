@@ -6,4 +6,5 @@
 ### Project/starfire_main.ipynb : STARFIRE pipeline
 ### Project/GEOTiff_averagetrial.ipynb : Algorithm to convert GEOTIFF into HEALPix format.
 ### Project/Country_Corr.ipynb : Check individual countries for correlations.
+### Project/PRATUSH_RFIcurve.ipynb : Code to obtain ground track for different satellite orbits and thus HEALPix pixels.
 
