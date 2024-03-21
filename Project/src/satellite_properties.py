@@ -9,10 +9,8 @@ def get_altitudes():
     """
     # The default value for minimum and maximum altitudes are 400km (Low-earth orbit)
     # and 36000km (Geo-stationary orbit) respectively. The default value for data_points is 3.
-    alt_min = float(input("Enter the minimum altitude of the satellite: "))
-    alt_max = float(input("Enter the maximum altitude of the satellite: "))
-    data_points = int(input("Enter number of data points : "))
-    altitudes = np.logspace(np.log10(alt_min), np.log10(alt_max), data_points) 
+    d1,d2,d3=(input('Enter desired altitudes:')).split()
+    altitudes =np.array((d1,d2,d3)).astype('float64')
     return altitudes
 
 def calc_elev_angle(npix, phi, theta, altitudes):
@@ -28,20 +26,26 @@ def calc_elev_angle(npix, phi, theta, altitudes):
     Returns:
         array: An array of the elevation angle of the satellite's antenna beam
     """
-    x_ang=np.zeros((npix, npix))
-    y_ang=np.zeros((npix, npix))
-    elev_ang=np.zeros((len(altitudes),npix,npix))
+    elev_ang = np.zeros((len(altitudes), npix, npix))
     R_E = R_earth.to('km').value
     for k in range(len(altitudes)):
         for i in range(len(theta)):
             for j in range(len(theta)):
-                x_ang[i,j]=((np.cos(np.radians(theta[i])))*(np.cos(np.radians(theta[j])))*
-                            (np.cos(np.radians(phi[j]-phi[i])))+(np.sin(np.radians(theta[i])))*
-                            (np.sin(np.radians(theta[j]))))
-                y_ang[i,j]=(np.arccos(x_ang[i,j]))
-                B=(altitudes[k]+R_E)/R_E
-                elev_ang[k,i,j]=-(np.degrees(np.arctan((B-np.cos(np.radians(y_ang[i,j])))/np.sin(np.radians(y_ang[i,j])))))
+                cos_theta_i = np.cos(np.radians(theta[i]))
+                cos_theta_j = np.cos(np.radians(theta[j]))
+                sin_theta_i = np.sin(np.radians(theta[i]))
+                sin_theta_j = np.sin(np.radians(theta[j]))
+                cos_phi_diff = np.cos(np.radians(phi[j] - phi[i]))
+                
+                x_ang = cos_theta_i * cos_theta_j * cos_phi_diff + sin_theta_i * sin_theta_j
+                y_ang = np.arccos(x_ang)
+                
+                B = (altitudes[k] + R_E) / R_E
+                sin_y_ang = np.sin(y_ang)
+                
+                elev_ang[k, i, j] = -(np.degrees(np.arctan((B - cos_theta_j) / sin_y_ang)))
     return elev_ang
+
 
 def get_beam_pattern(beam, theta):
     """Returns the beam pattern of the satellite antenna beam. The default beam pattern is
