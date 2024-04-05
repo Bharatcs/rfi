@@ -11,7 +11,7 @@ def country_select():
         selected_vals = df.loc[df['country'] == country, 'vals'].values
         print(f'{selected_vals[0]} Tx in total')
         path=f'./database/{country}' + ".csv"
-        path2=f'/home/pratush/5kRasters/{country}' +'_raster.tif'
+        path2=f'../Rasters/5kRasters/{country}' +'_raster.tif'
         return selected_vals[0],path,path2
         
     else:
