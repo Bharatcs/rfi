@@ -25,13 +25,13 @@ def read_csv(file_path):
                    Frequency of operation in MHz \n
                    EIRP (Effective Isotropic Radiated Power) in Watts
     """
+  #  print(file_path)
     # Read the CSV file into a pandas dataframe
     df = pd.read_csv(file_path)
-    
+  #  print(df)
     # Drop any rows that have missing values in the "Latitude in degrees" column
     df.dropna(subset=["Latitude in degrees"], inplace=True)
-        
-    # Return the cleaned dataframe
+    
     return df
 import os
 
@@ -104,6 +104,11 @@ def get_freq_range():
     fstart = get_freq_value("Please enter the minimum value of the frequency range (in MHz): ")
     fstop = get_freq_value("Please enter the maximum value of the frequency range (in MHz): ")
     fres = get_freq_value("Please enter the resolution of the frequency (in MHz): ")
+    freq_range = np.arange(fstart,fstop,fres)
+    return freq_range
+
+def get_freq_range_manual(fstart,fstop,fres):
+
     freq_range = np.arange(fstart,fstop,fres)
     return freq_range
 

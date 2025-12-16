@@ -75,3 +75,28 @@ def get_common_Tx(pixel_indices, pix_common, Rad_of_FOV):
             # FOV disc and the satellite pixel no with Tx having same pixel number
             found_common[i][j] = [l for l in pixel_indices if l in tx_common[i][j]]
     return found_common
+
+def get_common_Tx_fast(pixel_indices, pix_common, Rad_of_FOV):
+    """
+    Stores indices of the pixel number that intersect between the set of pixel numbers in the 
+    FOV circle/disc and location of FM transmitters in the database
+    """
+
+    n_pix = len(pix_common)
+    n_rad = len(Rad_of_FOV)
+
+    # Preserve exact output format
+    found_common = np.zeros((n_pix, n_rad), dtype=object)
+
+    for j in range(n_rad):
+        for i in range(n_pix):
+            # Convert once per cell (same as original logic)
+            tx_set = set(pix_common[i][j])
+
+            # IMPORTANT: preserve pixel_indices order exactly
+            found_common[i][j] = [
+                l for l in pixel_indices if l in tx_set
+            ]
+
+    return found_common
+

@@ -13,6 +13,15 @@ def get_altitudes():
     altitudes =np.array((d1,d2,d3)).astype('float64')
     return altitudes
 
+def get_altitudes_manual(d1,d2,d3):
+    """Returns the user-defined altitudes of the satellite in logspace.
+
+    Returns:
+        array: An array of altitudes in km in logspace.
+    """
+    altitudes =np.array((d1,d2,d3)).astype('float64')
+    return altitudes
+
 def calc_elev_angle(npix, phi, theta, altitudes):
     """Calculation of the elevation angle (theta). The elevation angle is the angle between the 
     satellite's azimuthal plane and the FM transmitting station on the Earth.
@@ -26,6 +35,7 @@ def calc_elev_angle(npix, phi, theta, altitudes):
     Returns:
         array: An array of the elevation angle of the satellite's antenna beam
     """
+    eps = 1e-12
     elev_ang = np.zeros((len(altitudes), npix, npix))
     R_E = R_earth.to('km').value
     for k in range(len(altitudes)):
@@ -38,13 +48,55 @@ def calc_elev_angle(npix, phi, theta, altitudes):
                 cos_phi_diff = np.cos(np.radians(phi[j] - phi[i]))
                 
                 x_ang = cos_theta_i * cos_theta_j * cos_phi_diff + sin_theta_i * sin_theta_j
+                x_ang = np.clip(x_ang, -1.0, 1.0)
                 y_ang = np.arccos(x_ang)
                 
                 B = (altitudes[k] + R_E) / R_E
                 sin_y_ang = np.sin(y_ang)
                 
-                elev_ang[k, i, j] = -(np.degrees(np.arctan((B - cos_theta_j) / sin_y_ang)))
+                elev_ang[k, i, j] = -(np.degrees(np.arctan((B - cos_theta_j) / (sin_y_ang+eps))))
     return elev_ang
+
+import numpy as np
+
+def calc_elev_angle_fast(npix, phi, theta, altitudes, eps=1e-12):
+    """
+    Fully vectorized calculation of elevation angle.
+    Returns array of shape (len(altitudes), npix, npix).
+    """
+    # convert to radians once
+    phi_rad = np.radians(phi)
+    theta_rad = np.radians(theta)
+
+    # precompute trig for theta (length n)
+    cos_theta = np.cos(theta_rad)   # shape (n,)
+    sin_theta = np.sin(theta_rad)   # shape (n,)
+
+    # cos(phi_j - phi_i) as an (n,n) matrix where element (i,j) is phi[j]-phi[i]
+    cos_phi_diff = np.cos(phi_rad[None, :] - phi_rad[:, None])  # shape (n,n)
+
+    # x_ang (n,n)
+    x_ang = (cos_theta[:, None] * cos_theta[None, :] * cos_phi_diff +
+             sin_theta[:, None] * sin_theta[None, :])
+    x_ang = np.clip(x_ang, -1.0, 1.0)
+
+    # angular separation y_ang (n,n)
+    y_ang = np.arccos(x_ang)
+    sin_y_ang = np.sin(y_ang)  # shape (n,n)
+
+    # vectorize over altitudes: B has shape (m,)
+    R_E = R_earth.to('km').value
+    B = (np.asarray(altitudes) + R_E) / R_E   # shape (m,)
+
+    # cos_theta_j needs shape (1, 1, n) to broadcast with sin_y_ang (1,n,n)
+    cos_theta_j = cos_theta[None, None, :]   # shape (1,1,n)
+    sin_y_ang_expanded = sin_y_ang[None, :, :]  # shape (1,n,n); matches (m,n,n) when B expanded
+
+    # compute numerator (B - cos_theta_j) with broadcasting and then arctan
+    numer = B[:, None, None] - cos_theta_j    # shape (m, n, n) via broadcasting
+    elev = -np.degrees(np.arctan(numer / (sin_y_ang_expanded + eps)))  # shape (m,n,n)
+
+    return elev
 
 
 def get_beam_pattern(beam, theta):
