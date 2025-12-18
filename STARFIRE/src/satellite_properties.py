@@ -115,6 +115,8 @@ def get_beam_pattern(beam, theta):
         pattern = np.cos(np.radians(theta))**2
     elif beam == "sin square":
         pattern = np.sin(np.radians(theta))**2 
+    elif beam == "isotropic":
+        pattern = np.ones_like(theta)
     else:
         print("Beam not found")
     return pattern
